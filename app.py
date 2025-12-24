@@ -1,47 +1,95 @@
-from flask import Flask, request, render_template
-import numpy as np
+import streamlit as st
 import pandas as pd
+import numpy as np
 
-from sklearn.preprocessing import StandardScaler
 from src.pipeline.predict_pipeline import CustomData, PredictPipeline
 
+# Page config
+st.set_page_config(
+    page_title="Student Exam Performance Predictor",
+    page_icon="📊",
+    layout="centered"
+)
 
-application = Flask(__name__)
+# Title
+st.title("🎓 Student Exam Performance Indicator")
+st.subheader("Predict Maths Score")
 
-app = application
+st.markdown("---")
 
-# Route for a home page
+# Form
+with st.form("prediction_form"):
+    gender = st.selectbox(
+        "Gender",
+        ["male", "female"]
+    )
 
-@app.route('/')
-def index():
-    return render_template('index.html')
+    ethnicity = st.selectbox(
+        "Race / Ethnicity",
+        ["group A", "group B", "group C", "group D", "group E"]
+    )
 
+    parental_level_of_education = st.selectbox(
+        "Parental Level of Education",
+        [
+            "associate's degree",
+            "bachelor's degree",
+            "high school",
+            "master's degree",
+            "some college",
+            "some high school"
+        ]
+    )
 
-@app.route('/predictdata',methods=['GET', 'POST'])
-def predict_datapoint():
-    if request.method == 'GET':
-        return render_template('home.html')
-    else:
-        data=CustomData(
-            gender=request.form.get('gender'),
-            race_ethnicity=request.form.get('ethnicity'),
-            parental_level_of_education=request.form.get('parental_level_of_education'),
-            lunch=request.form.get('lunch'),
-            test_preparation_course=request.form.get('test_preparation_course'),
-            reading_score=float(request.form.get('writing_score')),
-            writing_score=float(request.form.get('reading_score'))
+    lunch = st.selectbox(
+        "Lunch Type",
+        ["free/reduced", "standard"]
+    )
 
+    test_preparation_course = st.selectbox(
+        "Test Preparation Course",
+        ["none", "completed"]
+    )
+
+    reading_score = st.number_input(
+        "Reading Score (0 - 100)",
+        min_value=0,
+        max_value=100,
+        step=1
+    )
+
+    writing_score = st.number_input(
+        "Writing Score (0 - 100)",
+        min_value=0,
+        max_value=100,
+        step=1
+    )
+
+    submit = st.form_submit_button("Predict Maths Score")
+
+# Prediction
+if submit:
+    try:
+        data = CustomData(
+            gender=gender,
+            race_ethnicity=ethnicity,
+            parental_level_of_education=parental_level_of_education,
+            lunch=lunch,
+            test_preparation_course=test_preparation_course,
+            reading_score=reading_score,
+            writing_score=writing_score
         )
-        pred_df=data.get_data_as_data_frame()
-        print(pred_df)
-        print("Before Prediction")
 
-        predict_pipeline=PredictPipeline()
-        print("Mid Prediction")
-        results=predict_pipeline.predict(pred_df)
-        print("after Prediction")
-        return render_template('home.html',results=results[0])
-    
+        pred_df = data.get_data_as_data_frame()
 
-if __name__=="__main__":
-    app.run(host="0.0.0.0", debug=True)
+        # st.write("📄 Input Data")
+        # st.dataframe(pred_df)
+
+        predict_pipeline = PredictPipeline()
+        results = predict_pipeline.predict(pred_df)
+
+        st.success(f"✅ Predicted Maths Score: **{results[0]:.2f}**")
+
+    except Exception as e:
+        st.error("❌ Error during prediction")
+        st.exception(e)
