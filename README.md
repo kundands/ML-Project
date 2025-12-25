@@ -1,3 +1,6 @@
+<img width="677" height="882" alt="image" src="https://github.com/user-attachments/assets/fd156ae0-fa1c-422a-af1f-5430e1a2dd9c" />
+
+
 # Student Exam Performance Prediction 🎓📊
 
 ## Project Overview
