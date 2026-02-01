@@ -57,7 +57,7 @@ Such predictions can assist educators in early intervention, personalized learni
 - **Programming Language:** Python  
 - **Data Analysis:** pandas, numpy  
 - **Visualization:** matplotlib, seaborn  
-- **Machine Learning:** scikit-learn, CatBoost  
+- **Machine Learning:** scikit-learn, CatBoost, ML Algorithms  
 - **Development Environment:** Jupyter Notebook  
 - **Web Framework:** Streamlit
 - **Project Setup:** setup.py, requirements.txt  
